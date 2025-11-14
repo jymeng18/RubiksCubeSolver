@@ -33,6 +33,14 @@ public class Solver {
         }
         int currentThreshold = getHeuristic(cube);
 
+        // '35' is an arbitrary value, our threshold could be way higher
+        while(currentThreshold <= 35 && !foundSolution){
+            if(isTime()){
+                System.out.println("Time is up! Exiting");
+                return null;
+            }
+        }
+
         return null;
     }
 
@@ -66,12 +74,34 @@ public class Solver {
         // Bottom face (Red)
         misplacedCounter += countMisplaced(lines, 6, 8, 3, 6, 'R');
 
+        // Underestimate guess, may need to change later
         return Math.max(1, misplacedCounter / 4);
     }
+
+    /**
+     * Helper method for getHeuristic(..)
+     */
     private int countMisplaced(String[] line, int rowStart, int rowEnd, int colStart, int colEnd, char target){
-        return -1;
+        if(line == null){ return -1; }
+
+        int count = 0;
+        for(int i = rowStart; i <= rowEnd; i++){
+            // Bounds checking
+            if(i < line.length && line[i].length() >= colEnd) {
+                for (int j = colStart; j < colEnd; j++) {
+                    // Checking for mismatches
+                    if(j < line[i].length() && line[i].charAt(j) != target && line[i].charAt(j) != ' '){
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
     }
 
+    private boolean isTime(){
+        return (System.currentTimeMillis() - startTime) > MAX_TIME;
+    }
 
 	public static void main(String[] args) {
 		if (args.length < 2) {
