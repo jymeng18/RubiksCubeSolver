@@ -364,16 +364,48 @@ public class RubiksCube {
      * RRR
      */
     public boolean isSolved() {
-        for(int row = 0; row < cubeState.length; row++){
-            for(int col = 0; col < cubeState[row].length; col++){
-
-                // Compare original cube state to our current cube state
-                if(this.cubeState[row][col] != cubeInit[row][col]){
-                    return false;
-                }
+        // Check Top face (Orange) - rows 0-2, cols 3-5
+        for (int row = 0; row < 3; row++) {
+            for (int col = 3; col < 6; col++) {
+                if (cubeState[row][col] != 'O') return false;
             }
         }
-        // Is solved
+
+        // Check Left face (Green) - rows 3-5, cols 0-2
+        for (int row = 3; row < 6; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (cubeState[row][col] != 'G') return false;
+            }
+        }
+
+        // Check Front face (White) - rows 3-5, cols 3-5
+        for (int row = 3; row < 6; row++) {
+            for (int col = 3; col < 6; col++) {
+                if (cubeState[row][col] != 'W') return false;
+            }
+        }
+
+        // Check Right face (Blue) - rows 3-5, cols 6-8
+        for (int row = 3; row < 6; row++) {
+            for (int col = 6; col < 9; col++) {
+                if (cubeState[row][col] != 'B') return false;
+            }
+        }
+
+        // Check Back face (Yellow) - rows 3-5, cols 9-11
+        for (int row = 3; row < 6; row++) {
+            for (int col = 9; col < 12; col++) {
+                if (cubeState[row][col] != 'Y') return false;
+            }
+        }
+
+        // Check Bottom face (Red) - rows 6-8, cols 3-5
+        for (int row = 6; row < 9; row++) {
+            for (int col = 3; col < 6; col++) {
+                if (cubeState[row][col] != 'R') return false;
+            }
+        }
+
         return true;
     }
 
@@ -383,7 +415,6 @@ public class RubiksCube {
 
     @Override
     public String toString() {
-        // TODO implement me
         StringBuilder sb = new StringBuilder();
 
         // Must turn our 2D array into a String
