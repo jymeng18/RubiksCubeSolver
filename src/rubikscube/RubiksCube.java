@@ -12,15 +12,15 @@ public class RubiksCube {
     /**
      * default constructor
      * Creates a Rubik's Cube in an initial state:
-     * OOO
-     * OOO
-     * OOO
+     *    OOO
+     *    OOO
+     *    OOO
      * GGGWWWBBBYYY
      * GGGWWWBBBYYY
      * GGGWWWBBBYYY
-     * RRR
-     * RRR
-     * RRR
+     *    RRR
+     *    RRR
+     *    RRR
      */
     public RubiksCube() {
         this.cubeState = new char[9][12];
