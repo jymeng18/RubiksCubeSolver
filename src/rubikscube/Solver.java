@@ -32,16 +32,80 @@ public class Solver {
             return "";
         }
         int currentThreshold = getHeuristic(cube);
+        System.out.println("Init Heuristic: " + currentThreshold);
 
         // '35' is an arbitrary value, our threshold could be way higher
         while(currentThreshold <= 35 && !foundSolution){
-            if(isTime()){
+            if(isTime()){ // Check if we are under 10s runtime
                 System.out.println("Time is up! Exiting");
                 return null;
             }
-        }
+            solution.clear();
 
-        return null;
+            // Perform our DFS with A*
+            int val = IDASearch(cube, 0, currentThreshold);
+
+            // Solution found or out of time
+            if(val == -1){
+                foundSolution = true;
+                System.out.println("Found sol");
+                break;
+            }
+
+            // Solution was not found
+            if(val == Integer.MAX_VALUE){
+                break;
+            }
+            currentThreshold = val;
+        }
+        // Give user back the solution array as a str
+        return solutionToString();
+    }
+
+    /**
+     * Iterative Deepening DFS + A*
+     * @param cube cube state
+     * @param g actual cost
+     * @param limit currentThreshold
+     * @return -1 for fail, Integer.MAX_VALUE for success
+     */
+    int IDASearch(RubiksCube cube, int g, int limit){
+        assert cube != null;
+
+        if(isTime()){ return Integer.MAX_VALUE; }
+        if(cube.isSolved()){ return -1; }
+
+        // Obtain heuristic of our current cube state
+        int h = getHeuristic(cube);
+        int f = h + g;
+
+        // Check that f <= lim
+        if(f > limit){
+            return f; // f becomes newest heuristic
+        }
+        int min = Integer.MAX_VALUE;
+
+        // TODO: Change to successors later for performance
+        for(char move: MOVES){
+            String cubeStateBefore = cube.toString();
+
+            // Store our moves to solution list
+            cube.applyMoves(String.valueOf(move));
+            solution.add(move);
+            int temp = IDASearch(cube, g+1, limit);
+
+            if(temp == -1){ return -1; }
+            if(temp < min){
+                min = temp;
+            }
+
+            // Undo moves
+            solution.remove(solution.size() - 1);
+            for(int i = 0; i < 3; i++){
+                cube.applyMoves(String.valueOf(move));
+            }
+        }
+        return min;
     }
 
     /**
@@ -103,6 +167,14 @@ public class Solver {
         return (System.currentTimeMillis() - startTime) > MAX_TIME;
     }
 
+    private String solutionToString() {
+        StringBuilder sb = new StringBuilder();
+        for (char move : solution) {
+            sb.append(move);
+        }
+        return sb.toString();
+    }
+
 	public static void main(String[] args) {
 		if (args.length < 2) {
 			System.out.println("File names are not specified");
@@ -129,7 +201,8 @@ public class Solver {
             }
 
             Solver solver = new Solver();
-
+            String sol = solver.IDAStarSolve(cube);
+            System.out.println("Sol: " + sol);
         }
         // Error reading/writing file
         catch (IOException e){
