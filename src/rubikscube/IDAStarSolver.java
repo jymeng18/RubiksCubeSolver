@@ -42,7 +42,7 @@ public class IDAStarSolver {
             solution.clear();
 
             // Perform our DFS with A*
-            int val = IDASearch(cube, 0, currentThreshold);
+            int val = IDASearch(cube, 0, currentThreshold, ' ');
 
             // Solution found or out of time
             if(val == -1){
@@ -68,7 +68,7 @@ public class IDAStarSolver {
      * @param limit currentThreshold
      * @return -1 for fail, Integer.MAX_VALUE for success
      */
-    int IDASearch(RubiksCube cube, int g, int limit){
+    int IDASearch(RubiksCube cube, int g, int limit, char prevMove){
         assert cube != null;
 
         if(isTime()){ return Integer.MAX_VALUE; }
@@ -84,14 +84,16 @@ public class IDAStarSolver {
         }
         int min = Integer.MAX_VALUE;
 
-        // TODO: Change to successors later for performance
+        // TODO: Change to successors later for performance??
         for(char move: MOVES){
             String cubeStateBefore = cube.toString();
-
+            if(isOpposite(prevMove, move)){
+                continue; // skip this move
+            }
             // Store our moves to solution list
             cube.applyMoves(String.valueOf(move));
             solution.add(move);
-            int temp = IDASearch(cube, g+1, limit);
+            int temp = IDASearch(cube, g+1, limit, move);
 
             if(temp == -1){ return -1; }
             if(temp < min){
@@ -99,7 +101,7 @@ public class IDAStarSolver {
             }
 
             // Undo moves
-            solution.remove(solution.size() - 1);
+            solution.removeLast();
             for(int i = 0; i < 3; i++){
                 cube.applyMoves(String.valueOf(move));
             }
@@ -107,6 +109,16 @@ public class IDAStarSolver {
         return min;
     }
 
+    /**
+     * Avoid opposite moves as they are not search friendly
+     * Do not affect each other much, redundant behaviour
+     */
+    private boolean isOpposite(char lastMove, char curMove){
+        if(lastMove == ' '){ return false; }
+        if((lastMove == 'F' && curMove == 'B') || (lastMove == 'B' && curMove == 'F')){ return true; }
+        if((lastMove == 'L' && curMove == 'R') || (lastMove == 'R' && curMove == 'L')){ return true; }
+        return (lastMove == 'U' && curMove == 'D') || (lastMove == 'D' && curMove == 'U');
+    }
 
     private boolean isTime(){
         return (System.currentTimeMillis() - startTime) > MAX_TIME;

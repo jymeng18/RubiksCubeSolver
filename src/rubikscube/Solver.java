@@ -3,6 +3,7 @@ package rubikscube;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.concurrent.TimeUnit;
 
 public class Solver {
 	public static void main(String[] args) {
@@ -30,9 +31,17 @@ public class Solver {
                 return;
             }
 
+            // Print output
+            long startTime = System.currentTimeMillis();
             IDAStarSolver solver = new IDAStarSolver();
             String solution = solver.IDAStarSolve(cube);
+            long endTime = System.currentTimeMillis();
+
             System.out.println("Sol: " + solution);
+            long totalTime = endTime - startTime;
+            System.out.println("Runtime: " + totalTime + "ms");
+
+            // TODO: write output to a file
         }
         // Error reading/writing file
         catch (IOException e){
