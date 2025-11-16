@@ -6,7 +6,7 @@ package rubikscube;
  */
 class Edge {
     // Which edge piece this is (0-11)
-    private final int pieceId;
+    private int pieceId;
 
     // Orientation: 0 = correct, 1 = flipped
     private int orientation;
@@ -21,6 +21,7 @@ class Edge {
     }
 
     public int getPieceId() { return pieceId; }
+    public void setPieceId(int pieceId){ this.pieceId = pieceId; }
     public int getOrientation() { return orientation; }
     public char[] getColors() { return colors; }
     public void setOrientation(int orientation) { this.orientation = orientation; }

@@ -6,7 +6,7 @@ package rubikscube;
  */
 public class Corner {
     // 0-7
-    private final int pieceID;
+    private int pieceID;
 
     // Orientation: 0 = correct, 1 = clockwise, 2 = counter-clockwise
     private int ori;
@@ -21,6 +21,7 @@ public class Corner {
     }
 
     public int getPieceId() { return pieceID; }
+    public void setPieceID(int pieceID){ this.pieceID = pieceID; }
     public int getOrientation() { return ori; }
     public char[] getColors() { return colors; }
     public void setOrientation(int orientation) { this.ori = orientation; }

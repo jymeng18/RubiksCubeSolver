@@ -141,15 +141,70 @@ public class CubieMapper {
      */
     private static void identifyCorner(Corner corner){
         if(corner == null){ return; }
-        char[] colors = corner.getColors(); // Returns ['O', 'G', 'W']
+        char[] extractedColors = corner.getColors(); // Returns ['O', 'G', 'W']
 
         // Match this piece's colors with a corresponding solved corner piece
         for(int pieceID = 0; pieceID < 8; pieceID++){
             char[] solvedColors = SOLVED_CORNER_COLORS[pieceID]; // Returns ['O', 'W', 'G']
+            if(hasColors(extractedColors, solvedColors)){
+                corner.setPieceID(pieceID);
 
+                // Calculate orientation
+                int ori = calculateOrientation(extractedColors, solvedColors);
+                corner.setOrientation(ori);
+                return;
+            }
         }
+        /*
+         * Code should not reach here, for each extracted colour array from our
+         * physical cubeState, there must be one matching solved piece
+         */
+        throw new IllegalStateException("Line162: Something wrong with cube.");
     }
 
+    /**
+     * Identify edge pieces and calculate its orientation (0 or 1)
+     */
+    private static void identifyEdges(Edge edge){
+        if(edge == null){ return; }
+        char[] extractedColors = edge.getColors();
+
+        for(int pieceID = 0; pieceID < 12; pieceID++){
+            char[] solvedColors = SOLVED_CORNER_COLORS[pieceID];
+            if(hasColors(extractedColors, solvedColors)){
+                edge.setPieceId(pieceID);
+
+                int ori = (extractedColors[0] == solvedColors[0]) ? 0: 1;
+                edge.setOrientation(ori);
+                return;
+            }
+        }
+        throw new IllegalStateException("Line175: Something wrong with cube.");
+    }
+
+
+    /**
+     * Calculate the orientation of each corner
+     * 0 for normal
+     * 1 for clockwise twist
+     * 2 for counterclockwise twist
+     */
+    private static int calculateOrientation(char[] extracted, char[] physical){
+        if(extracted.length == 0 || physical.length == 0){ return -1; }
+
+        // Find 'Up-Color' displacement
+        for(int i = 0; i < 3; i++){
+            if(extracted[i] == physical[0]){
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Checks if two color arrays hold the same colors
+     * regardless of order
+     */
     private static boolean hasColors(char[] color1, char[] color2){
         if(color1.length != color2.length){ return false; } // Should not occur at all in execution
 
