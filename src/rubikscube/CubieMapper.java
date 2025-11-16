@@ -132,6 +132,7 @@ public class CubieMapper {
             char c1 = cubeState[coords[0].row][coords[0].col];
             char c2 = cubeState[coords[1].row][coords[1].col];
             edges[i] = new Edge(i, c1, c2);
+            identifyEdges(edges[i]);
         }
         return edges;
     }
@@ -141,7 +142,7 @@ public class CubieMapper {
      */
     private static void identifyCorner(Corner corner){
         if(corner == null){ return; }
-        char[] extractedColors = corner.getColors(); // Returns ['O', 'G', 'W']
+        char[] extractedColors = corner.getColors(); // Returns ex, ['O', 'G', 'W']
 
         // Match this piece's colors with a corresponding solved corner piece
         for(int pieceID = 0; pieceID < 8; pieceID++){
@@ -170,7 +171,7 @@ public class CubieMapper {
         char[] extractedColors = edge.getColors();
 
         for(int pieceID = 0; pieceID < 12; pieceID++){
-            char[] solvedColors = SOLVED_CORNER_COLORS[pieceID];
+            char[] solvedColors = SOLVED_EDGE_COLORS[pieceID];
             if(hasColors(extractedColors, solvedColors)){
                 edge.setPieceId(pieceID);
 

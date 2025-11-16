@@ -25,4 +25,10 @@ public class Corner {
     public int getOrientation() { return ori; }
     public char[] getColors() { return colors; }
     public void setOrientation(int orientation) { this.ori = orientation; }
+
+    @Override
+    public String toString() {
+        return "Corner[piece=" + pieceID + ", orient=" + ori +
+                ", colors=" + colors[0] + colors[1] + colors[2] + "]";
+    }
 }

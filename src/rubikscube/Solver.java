@@ -7,14 +7,13 @@ import java.util.concurrent.TimeUnit;
 
 public class Solver {
 	public static void main(String[] args) {
-		if (args.length < 2) {
+		if (args.length < 1) {
 			System.out.println("File names are not specified");
 			System.out.println("usage: java " + MethodHandles.lookup().lookupClass().getName() + " input_file output_file");
 			return;
 		}
 
 		File input = new File(args[0]);
-		File output = new File(args[1]);
 
         try {
             // Pass in our scrambled.txt file
@@ -25,23 +24,12 @@ public class Solver {
             System.out.println("Cube init state: ");
             System.out.println(cube.toString());
 
-            // If cube is already solved, no need to continue
-            if(cube.isSolved()){
-                System.out.println("Cube is already solved, Exiting");
-                return;
-            }
+            // TODO: If cube is already solved, no need to continue
 
             // Print output
-            long startTime = System.currentTimeMillis();
-            IDAStarSolver solver = new IDAStarSolver();
-            String solution = solver.IDAStarSolve(cube);
-            long endTime = System.currentTimeMillis();
+            System.out.println("//======Cubie Testing=====//");
+            testCubieMapping(cube);
 
-            System.out.println("Sol: " + solution);
-            long totalTime = endTime - startTime;
-            System.out.println("Runtime: " + totalTime + "ms");
-
-            // TODO: write output to a file
         }
         // Error reading/writing file
         catch (IOException e){
@@ -52,4 +40,20 @@ public class Solver {
             System.err.println("Incorrect format! " + e.getMessage());
         }
 	}
+
+    public static void testCubieMapping(RubiksCube cube){
+        Corner[] corners = cube.getCorners();
+        Edge[] edges = cube.getEdges();
+
+        System.out.println("\nCorners");
+        for(int i = 0; i < 8 && i < corners.length; i++){
+            System.out.println(" Position "+ i + ": " + corners[i]);
+        }
+
+        System.out.println("\nEdges");
+        for(int i = 0; i < 12 && i < edges.length; i++){
+            System.out.println(" Position " + i + ": " + edges[i]);
+        }
+
+    }
 }

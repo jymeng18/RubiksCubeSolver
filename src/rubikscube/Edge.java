@@ -4,7 +4,7 @@ package rubikscube;
  * Represents an edge piece on the Rubik's Cube.
  * An edge has 2 colored stickers and can be oriented 2 ways (flipped or not).
  */
-class Edge {
+public class Edge {
     // Which edge piece this is (0-11)
     private int pieceId;
 

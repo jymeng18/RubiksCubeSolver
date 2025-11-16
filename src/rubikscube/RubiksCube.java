@@ -104,6 +104,7 @@ public class RubiksCube {
 
     }
 
+    // TODO: Might be a little slow, may need to optimize
     public boolean isSolved() {
         // Check Top face (Orange) - rows 0-2, cols 3-5
         for (int row = 0; row < 3; row++) {
@@ -178,6 +179,14 @@ public class RubiksCube {
 
         // Method returns String, not StringBuilder obj.
         return sb.toString();
+    }
+
+    public Corner[] getCorners(){
+        return this.corners;
+    }
+
+    public Edge[] getEdges(){
+        return this.edges;
     }
 }
 
