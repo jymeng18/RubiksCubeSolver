@@ -7,6 +7,8 @@ import java.io.IOException;
 public class RubiksCube {
 
     private final char[][] cubeState;
+    Corner[] corners;
+    Edge[] edges;
 
     /**
      * @param fileName file to read from
@@ -17,7 +19,6 @@ public class RubiksCube {
         if(fileName == null){
             throw new IllegalArgumentException("Filename must be valid");
         }
-
         this.cubeState = new char[9][12];
 
         // Read file 'fileName'
@@ -43,6 +44,8 @@ public class RubiksCube {
                 cubeState[i][j] = line.charAt(j);
             }
         }
+        this.corners = CubieMapper.getCorners(cubeState);
+        this.edges = CubieMapper.getEdges(cubeState);
         input.close();
     }
 

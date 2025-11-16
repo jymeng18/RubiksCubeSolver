@@ -1,6 +1,19 @@
 package rubikscube;
 
 public class CubieMapper {
+
+    private static final char[][] SOLVED_STATE = {
+            {' ', ' ', ' ', 'O', 'O', 'O', ' ', ' ', ' ', ' ', ' ', ' '},
+            {' ', ' ', ' ', 'O', 'O', 'O', ' ', ' ', ' ', ' ', ' ', ' '},
+            {' ', ' ', ' ', 'O', 'O', 'O', ' ', ' ', ' ', ' ', ' ', ' '},
+            {'G', 'G', 'G', 'W', 'W', 'W', 'B', 'B', 'B', 'Y', 'Y', 'Y'},
+            {'G', 'G', 'G', 'W', 'W', 'W', 'B', 'B', 'B', 'Y', 'Y', 'Y'},
+            {'G', 'G', 'G', 'W', 'W', 'W', 'B', 'B', 'B', 'Y', 'Y', 'Y'},
+            {' ', ' ', ' ', 'R', 'R', 'R', ' ', ' ', ' ', ' ', ' ', ' '},
+            {' ', ' ', ' ', 'R', 'R', 'R', ' ', ' ', ' ', ' ', ' ', ' '},
+            {' ', ' ', ' ', 'R', 'R', 'R', ' ', ' ', ' ', ' ', ' ', ' '}
+    };
+
     /**
      * Coordinate in 2D cubeState array
      */
@@ -62,10 +75,39 @@ public class CubieMapper {
             {new Coord(4, 9), new Coord(4, 8)},
     };
 
+    // Piece Identification for Corners
+    private static final char[][] SOLVED_CORNER_COLORS = {
+            {'O', 'W', 'G'},  // 0: UFL
+            {'O', 'W', 'B'},  // 1: UFR
+            {'O', 'Y', 'G'},  // 2: UBL
+            {'O', 'Y', 'B'},  // 3: UBR
+            {'R', 'W', 'G'},  // 4: DFL
+            {'R', 'W', 'B'},  // 5: DFR
+            {'R', 'Y', 'G'},  // 6: DBL
+            {'R', 'Y', 'B'}   // 7: DBR
+    };
+
+    private static final char[][] SOLVED_EDGE_COLORS = {
+            {'O', 'W'},  // 0: UF
+            {'O', 'G'},  // 1: UL
+            {'O', 'B'},  // 2: UR
+            {'O', 'Y'},  // 3: UB
+            {'R', 'W'},  // 4: DF
+            {'R', 'G'},  // 5: DL
+            {'R', 'B'},  // 6: DR
+            {'R', 'Y'},  // 7: DB
+            {'W', 'G'},  // 8: FL
+            {'W', 'B'},  // 9: FR
+            {'Y', 'G'},  // 10: BL
+            {'Y', 'B'}   // 11: BR
+    };
+
     /**
      * Get all corners from the cubeState
      */
-    public static Corner[] getCorners(char [][] cubeState){
+    public static Corner[] getCorners(char[][] cubeState){
+        if(cubeState == null){ return null; }
+
         Corner[] corners = new Corner[8];
         for(int i = 0; i < 8; i++){
             Coord[] coords = CORNER_COORDS[i];
@@ -73,7 +115,55 @@ public class CubieMapper {
             char c2 = cubeState[coords[1].row][coords[1].col];
             char c3 = cubeState[coords[2].row][coords[2].col];
             corners[i] = new Corner(i ,c1, c2, c3);
+            identifyCorner(corners[i]);
         }
         return corners;
     }
+
+    /**
+     * Get all edges from cubeState
+     */
+    public static Edge[] getEdges(char[][] cubeState){
+        if(cubeState == null){ return null;}
+
+        Edge[] edges = new Edge[12];
+        for(int i = 0; i < 12; i++){
+            Coord[] coords = EDGE_COORDS[i]; // Subarray
+            char c1 = cubeState[coords[0].row][coords[0].col];
+            char c2 = cubeState[coords[1].row][coords[1].col];
+            edges[i] = new Edge(i, c1, c2);
+        }
+        return edges;
+    }
+
+    /**
+     * Identify which piece a corner is and calculate its orientation
+     */
+    private static void identifyCorner(Corner corner){
+        if(corner == null){ return; }
+        char[] colors = corner.getColors(); // Returns ['O', 'G', 'W']
+
+        // Match this piece's colors with a corresponding solved corner piece
+        for(int pieceID = 0; pieceID < 8; pieceID++){
+            char[] solvedColors = SOLVED_CORNER_COLORS[pieceID]; // Returns ['O', 'W', 'G']
+
+        }
+    }
+
+    private static boolean hasColors(char[] color1, char[] color2){
+        if(color1.length != color2.length){ return false; } // Should not occur at all in execution
+
+        for(char c: color1){
+            boolean isFound = false;
+            for(char c1: color2){
+                if(c == c1){
+                    isFound = true;
+                    break;
+                }
+            }
+            if(!isFound){ return false; }
+        }
+        return true;
+    }
+
 }
