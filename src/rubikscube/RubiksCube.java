@@ -50,7 +50,7 @@ public class RubiksCube {
     }
 
     /**
-     * @param moves Applies the sequence of moves on the Rubik's Cube
+     * Applies the sequence of moves on the Rubik's Cube
      */
     public void applyMoves(String moves) {
 
@@ -80,7 +80,11 @@ public class RubiksCube {
         }
     }
 
+    /**
+     * Rotate front face 90 degrees clockwise
+     */
     public void moveFront(){
+        // Cycle 4 corners UFL -> UFR -> DFR -> DFL -> UFL
 
     }
 

@@ -151,7 +151,7 @@ public class CubieMapper {
                 corner.setPieceID(pieceID);
 
                 // Calculate orientation
-                int ori = calculateOrientation(extractedColors, solvedColors);
+                int ori = calculateCornerOrientation(extractedColors, solvedColors);
                 corner.setOrientation(ori);
                 return;
             }
@@ -175,7 +175,7 @@ public class CubieMapper {
             if(hasColors(extractedColors, solvedColors)){
                 edge.setPieceId(pieceID);
 
-                int ori = (extractedColors[0] == solvedColors[0]) ? 0: 1;
+                int ori = calculateEdgeOrientation(extractedColors, solvedColors);
                 edge.setOrientation(ori);
                 return;
             }
@@ -190,16 +190,35 @@ public class CubieMapper {
      * 1 for clockwise twist
      * 2 for counterclockwise twist
      */
-    private static int calculateOrientation(char[] extracted, char[] physical){
-        if(extracted.length == 0 || physical.length == 0){ return -1; }
-
-        // Find 'Up-Color' displacement
-        for(int i = 0; i < 3; i++){
-            if(extracted[i] == physical[0]){
-                return i;
+    private static int calculateCornerOrientation(char[] actual, char[] solved) {
+        // Try all 3 possible rotations of the solved piece
+        for (int orientation = 0; orientation < 3; orientation++) {
+            boolean matches = true;
+            for (int i = 0; i < 3; i++) {
+                int solvedIndex = (orientation + i) % 3;
+                if (solved[solvedIndex] != actual[i]) {
+                    matches = false;
+                    break;
+                }
+            }
+            if (matches) {
+                return orientation;
             }
         }
-        return 0;
+        throw new IllegalStateException("Invalid corner orientation");
+    }
+
+    /**
+     * Calculate the orientation of an edge
+     * 0 = normal, 1 = flipped
+     */
+    private static int calculateEdgeOrientation(char[] actual, char[] solved) {
+        // Check if the colors match in order
+        if (actual[0] == solved[0] && actual[1] == solved[1]) {
+            return 0; // Correct orientation
+        } else {
+            return 1; // Flipped
+        }
     }
 
     /**
