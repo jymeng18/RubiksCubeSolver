@@ -83,81 +83,148 @@ public class RubiksCube {
     /**
      * Rotate front face 90 degrees clockwise
      */
-    public void moveFront(){
-        // Cycle 4 corners UFL -> UFR -> DFR -> DFL -> UFL
+    public void moveFront() {
+        // UFL -> UFR -> DFR -> DFL
+        cycleCornersClockwise(0, 1, 5, 4);
 
+        // Update corner orientations **after cycling**
+        corners[0].setOrientation((corners[0].getOrientation() + 1) % 3);
+        corners[1].setOrientation((corners[1].getOrientation() + 2) % 3);
+        corners[5].setOrientation((corners[5].getOrientation() + 1) % 3);
+        corners[4].setOrientation((corners[4].getOrientation() + 2) % 3);
+
+        // UF -> FR -> DF -> FL
+        cycleEdgesClockwise(0, 9, 4, 8);
+
+        edges[0].setOrientation((edges[0].getOrientation() + 1) % 2);
+        edges[9].setOrientation((edges[9].getOrientation() + 1) % 2);
+        edges[4].setOrientation((edges[4].getOrientation() + 1) % 2);
+        edges[8].setOrientation((edges[8].getOrientation() + 1) % 2);
     }
 
-    public void moveBack(){
+    /**
+     * Rotate back face 90 degrees clockwise
+     */
+    public void moveBack() {
+        // UBR -> UBL -> DBL -> DBR
+        cycleCornersClockwise(3, 2, 6, 7);
 
+        corners[3].setOrientation((corners[3].getOrientation() + 1) % 3);
+        corners[2].setOrientation((corners[2].getOrientation() + 2) % 3);
+        corners[6].setOrientation((corners[6].getOrientation() + 1) % 3);
+        corners[7].setOrientation((corners[7].getOrientation() + 2) % 3);
+
+        // UB -> BL -> DB -> BR
+        cycleEdgesClockwise(3, 10, 7, 11);
+
+        edges[3].setOrientation((edges[3].getOrientation() + 1) % 2);
+        edges[10].setOrientation((edges[10].getOrientation() + 1) % 2);
+        edges[7].setOrientation((edges[7].getOrientation() + 1) % 2);
+        edges[11].setOrientation((edges[11].getOrientation() + 1) % 2);
     }
 
-    public void moveRight(){
+    /**
+     * Rotate right face 90 degrees clockwise
+     */
+    public void moveRight() {
+        // UFR -> UBR -> DBR -> DFR
+        cycleCornersClockwise(1, 3, 7, 5);
 
+        corners[1].setOrientation((corners[1].getOrientation() + 1) % 3);
+        corners[3].setOrientation((corners[3].getOrientation() + 2) % 3);
+        corners[7].setOrientation((corners[7].getOrientation() + 1) % 3);
+        corners[5].setOrientation((corners[5].getOrientation() + 2) % 3);
+
+        // UR -> BR -> DR -> FR
+        cycleEdgesClockwise(2, 11, 6, 9);
     }
 
-    public void moveLeft(){
+    /**
+     * Rotate left face 90 degrees clockwise
+     */
+    public void moveLeft() {
+        // UBL -> UFL -> DFL -> DBL
+        cycleCornersClockwise(2, 0, 4, 6);
 
+        corners[2].setOrientation((corners[2].getOrientation() + 1) % 3);
+        corners[0].setOrientation((corners[0].getOrientation() + 2) % 3);
+        corners[4].setOrientation((corners[4].getOrientation() + 1) % 3);
+        corners[6].setOrientation((corners[6].getOrientation() + 2) % 3);
+
+        // UL -> FL -> DL -> BL
+        cycleEdgesClockwise(1, 8, 5, 10);
     }
 
-    public void moveUp(){
+    /**
+     * Rotate up face 90 degrees clockwise
+     * No corner orientation changes
+     */
+    public void moveUp() {
+        // UBL -> UBR -> UFR -> UFL
+        cycleCornersClockwise(2, 3, 1, 0);
 
+        // UB -> UR -> UF -> UL
+        cycleEdgesClockwise(3, 2, 0, 1);
     }
 
-    public void moveDown(){
+    /**
+     * Rotate down face 90 degrees clockwise
+     * No corner orientation changes
+     */
+    public void moveDown() {
+        // DFL -> DFR -> DBR -> DBL
+        cycleCornersClockwise(4, 5, 7, 6);
 
+        // DF -> DR -> DB -> DL
+        cycleEdgesClockwise(4, 6, 7, 5);
     }
 
-    // TODO: Might be a little slow, may need to optimize
+
+    /**
+     * Helper method to cycle 4 corners clockwise
+     * Example: a -> b -> c -> d -> a
+     */
+    private void cycleCornersClockwise(int a, int b, int c, int d) {
+        Corner temp = corners[a];
+        corners[a] = corners[d];
+        corners[d] = corners[c];
+        corners[c] = corners[b];
+        corners[b] = temp;
+    }
+
+    /**
+     * Helper method to cycle 4 edges clockwise
+     * Example: a -> b -> c -> d -> a
+     */
+    private void cycleEdgesClockwise(int a, int b, int c, int d) {
+        Edge temp = edges[a];
+        edges[a] = edges[d];
+        edges[d] = edges[c];
+        edges[c] = edges[b];
+        edges[b] = temp;
+    }
+
+    /**
+     * Check if cube is solved using cubie representation
+     * All pieces must be in their home positions with orientation 0
+     */
     public boolean isSolved() {
-        // Check Top face (Orange) - rows 0-2, cols 3-5
-        for (int row = 0; row < 3; row++) {
-            for (int col = 3; col < 6; col++) {
-                if (cubeState[row][col] != 'O') return false;
+        // Check all corners are in home position with correct orientation
+        for(int i = 0; i < 8; i++) {
+            if(corners[i].getPieceId() != i || corners[i].getOrientation() != 0) {
+                return false;
             }
         }
 
-        // Check Left face (Green) - rows 3-5, cols 0-2
-        for (int row = 3; row < 6; row++) {
-            for (int col = 0; col < 3; col++) {
-                if (cubeState[row][col] != 'G') return false;
-            }
-        }
-
-        // Check Front face (White) - rows 3-5, cols 3-5
-        for (int row = 3; row < 6; row++) {
-            for (int col = 3; col < 6; col++) {
-                if (cubeState[row][col] != 'W') return false;
-            }
-        }
-
-        // Check Right face (Blue) - rows 3-5, cols 6-8
-        for (int row = 3; row < 6; row++) {
-            for (int col = 6; col < 9; col++) {
-                if (cubeState[row][col] != 'B') return false;
-            }
-        }
-
-        // Check Back face (Yellow) - rows 3-5, cols 9-11
-        for (int row = 3; row < 6; row++) {
-            for (int col = 9; col < 12; col++) {
-                if (cubeState[row][col] != 'Y') return false;
-            }
-        }
-
-        // Check Bottom face (Red) - rows 6-8, cols 3-5
-        for (int row = 6; row < 9; row++) {
-            for (int col = 3; col < 6; col++) {
-                if (cubeState[row][col] != 'R') return false;
+        // Check all edges are in home position with correct orientation
+        for(int i = 0; i < 12; i++) {
+            if(edges[i].getPieceId() != i || edges[i].getOrientation() != 0) {
+                return false;
             }
         }
 
         return true;
     }
-
-    /**
-     * @return cube_state as a string instead of a 2D Array
-     */
 
     @Override
     public String toString() {

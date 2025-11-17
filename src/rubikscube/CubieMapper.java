@@ -142,7 +142,7 @@ public class CubieMapper {
      */
     private static void identifyCorner(Corner corner){
         if(corner == null){ return; }
-        char[] extractedColors = corner.getColors(); // Returns ex, ['O', 'G', 'W']
+        char[] extractedColors = corner.getColors(); // Returns ['O', 'G', 'W']
 
         // Match this piece's colors with a corresponding solved corner piece
         for(int pieceID = 0; pieceID < 8; pieceID++){
@@ -150,8 +150,10 @@ public class CubieMapper {
             if(hasColors(extractedColors, solvedColors)){
                 corner.setPieceID(pieceID);
 
-                // Calculate orientation
-                int ori = calculateCornerOrientation(extractedColors, solvedColors);
+                // Calculate orientation based on piece ID (not just solved[0])
+                // For upper corners (0-3), reference face is 'O' (up)
+                // For lower corners (4-7), reference face is 'R' (down)
+                int ori = calculateOrientation(extractedColors, solvedColors, pieceID);
                 corner.setOrientation(ori);
                 return;
             }
@@ -175,7 +177,7 @@ public class CubieMapper {
             if(hasColors(extractedColors, solvedColors)){
                 edge.setPieceId(pieceID);
 
-                int ori = calculateEdgeOrientation(extractedColors, solvedColors);
+                int ori = (extractedColors[0] == solvedColors[0]) ? 0: 1;
                 edge.setOrientation(ori);
                 return;
             }
@@ -190,35 +192,27 @@ public class CubieMapper {
      * 1 for clockwise twist
      * 2 for counterclockwise twist
      */
-    private static int calculateCornerOrientation(char[] actual, char[] solved) {
-        // Try all 3 possible rotations of the solved piece
-        for (int orientation = 0; orientation < 3; orientation++) {
-            boolean matches = true;
-            for (int i = 0; i < 3; i++) {
-                int solvedIndex = (orientation + i) % 3;
-                if (solved[solvedIndex] != actual[i]) {
-                    matches = false;
-                    break;
-                }
-            }
-            if (matches) {
-                return orientation;
-            }
-        }
-        throw new IllegalStateException("Invalid corner orientation");
-    }
+    private static int calculateOrientation(char[] extracted, char[] solved, int pieceID){
+        if(extracted.length == 0 || solved.length == 0){ return -1; }
 
-    /**
-     * Calculate the orientation of an edge
-     * 0 = normal, 1 = flipped
-     */
-    private static int calculateEdgeOrientation(char[] actual, char[] solved) {
-        // Check if the colors match in order
-        if (actual[0] == solved[0] && actual[1] == solved[1]) {
-            return 0; // Correct orientation
+        // Determine reference face color based on piece ID
+        // For upper corners (0-3), reference is 'O' (up face)
+        // For lower corners (4-7), reference is 'R' (down face)
+        char referenceColor;
+        if(pieceID < 4){
+            referenceColor = 'O'; // Upper corners use up face as reference
         } else {
-            return 1; // Flipped
+            referenceColor = 'R'; // Lower corners use down face as reference
         }
+
+        // Find where reference color appears in extracted colors
+        for(int i = 0; i < 3; i++){
+            if(extracted[i] == referenceColor){
+                return i;
+            }
+        }
+        System.out.println("Should not reach here");
+        return 0;
     }
 
     /**

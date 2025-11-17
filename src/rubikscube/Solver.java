@@ -3,7 +3,6 @@ package rubikscube;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.concurrent.TimeUnit;
 
 public class Solver {
 	public static void main(String[] args) {
@@ -21,8 +20,6 @@ public class Solver {
 
             // Debugging information
             System.out.println("Reading scrambled cube from: " + input);
-            System.out.println("Cube init state: ");
-            System.out.println(cube.toString());
 
             // TODO: If cube is already solved, no need to continue
 
@@ -42,18 +39,50 @@ public class Solver {
 	}
 
     public static void testCubieMapping(RubiksCube cube){
-        Corner[] corners = cube.getCorners();
-        Edge[] edges = cube.getEdges();
+        Corner[] corners;
+        Edge[] edges;
 
-        System.out.println("\nCorners");
-        for(int i = 0; i < 8 && i < corners.length; i++){
-            System.out.println(" Position "+ i + ": " + corners[i]);
+        System.out.println("====== INITIAL SOLVED STATE (from file) ======");
+        System.out.println(cube.toString());
+        corners = cube.getCorners();
+        edges = cube.getEdges();
+
+        System.out.println();
+        System.out.println();
+
+        System.out.println("Init");
+        corners = cube.getCorners();
+        for(int i = 0; i < 8; i ++) {
+            System.out.println("Pos: " + i + ": " + corners[i]);
         }
 
-        System.out.println("\nEdges");
-        for(int i = 0; i < 12 && i < edges.length; i++){
-            System.out.println(" Position " + i + ": " + edges[i]);
+        cube.applyMoves("F");
+        corners = cube.getCorners();
+        for(int i = 0; i < 8; i ++) {
+            System.out.println("Pos: " + i + ": " + corners[i]);
         }
 
+        System.out.println();
+        cube.applyMoves("B");
+        corners = cube.getCorners();
+        for(int i = 0; i < 8; i ++) {
+            System.out.println("Pos: " + i + ": " + corners[i]);
+        }
+
+        System.out.println();
+        cube.applyMoves("B");
+        corners = cube.getCorners();
+        for(int i = 0; i < 8; i ++) {
+            System.out.println("Pos: " + i + ": " + corners[i]);
+        }
+
+        System.out.println();
+        cube.applyMoves("B");
+        corners = cube.getCorners();
+        for(int i = 0; i < 8; i ++) {
+            System.out.println("Pos: " + i + ": " + corners[i]);
+        }
+
+        System.out.println("Solved: " + cube.isSolved());
     }
 }
